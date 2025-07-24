@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Добавить рецепт | Узбекская кухня</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <header class="gradient-bg text-white py-6">
+    <div class="container mx-auto px-6 flex justify-between items-center">
+      <h1 class="text-3xl font-bold"><a href="index.html">Узбекская кухня</a></h1>
+      <nav class="space-x-4">
+<a href="recipes.html" class="hover:underline">Блюда</a>
+<a href="drinks.html" class="hover:underline">Напитки</a>
+<a href="community.html" class="hover:underline">Сообщество</a>
+<a href="submit-recipe.html" class="underline">Добавить рецепт</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="py-10 px-6 max-w-3xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">Добавить рецепт</h2>
+    <form id="recipeForm" class="space-y-6">
+      <input type="text" id="title" placeholder="Название блюда" required class="input-style">
+      <textarea id="ingredients" placeholder="Ингредиенты (через запятую)" rows="4" required class="input-style"></textarea>
+      <input type="text" id="tags" placeholder="Теги (плов, мясо, острое...)" class="input-style">
+      <input type="file" id="photo" accept="image/*" required class="input-style">
+      <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg transition">Опубликовать рецепт</button>
+    </form>
+    <p id="status" class="mt-4 text-green-600 font-medium"></p>
+  </section>
+
+  <footer class="gradient-bg text-white py-6 mt-12">
+    <div class="container mx-auto px-6 text-center">
+      <p>&copy; 2025 Узбекская кухня. Все права защищены.</p>
+    </div>
+  </footer>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvgGYErR11oRTBeOmKsC6IXZYU9WhCBL4",
+      authDomain: "foodsite-e0847.firebaseapp.com",
+      projectId: "foodsite-e0847",
+      storageBucket: "foodsite-e0847.appspot.com",
+      messagingSenderId: "739541526708",
+      appId: "1:739541526708:web:70e4507f7f6e3a90d90fe1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    // Проверка авторизации
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        alert("Пожалуйста, войдите чтобы добавить рецепт.");
+        location.href = "login.html";
+      }
+    });
+
+    function logout() {
+      auth.signOut().then(() => location.reload());
+    }
+
+    document.getElementById("recipeForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const title = document.getElementById("title").value;
+      const ingredients = document.getElementById("ingredients").value;
+      const tags = document.getElementById("tags").value.split(',').map(tag => tag.trim());
+      const file = document.getElementById("photo").files[0];
+      const photoRef = storage.ref(`recipes/${Date.now()}_${file.name}`);
+      const snapshot = await photoRef.put(file);
+      const photoURL = await snapshot.ref.getDownloadURL();
+
+      await db.collection("recipes").add({
+        title,
+        ingredients,
+        tags,
+        photoURL,
+        author: user.email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      document.getElementById("status").textContent = "Рецепт успешно опубликован!";
+      document.getElementById("recipeForm").reset();
+    });
+  </script>
+
+  <style>
+    .gradient-bg {
+      background: linear-gradient(135deg, #dc2626 0%, #7f1d1d 40%, #64748b 100%);
+    }
+    .input-style {
+      @apply w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400;
+    }
+  </style>
+</body>
+</html>
