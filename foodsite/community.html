@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Сообщество | Узбекская кухня</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <header class="gradient-bg text-white py-6">
+    <div class="container mx-auto px-6 flex justify-between items-center">
+      <h1 class="text-3xl font-bold"><a href="index.html">Узбекская кухня</a></h1>
+      <nav class="space-x-4">
+<a href="recipes.html" class="hover:underline">Блюда</a>
+<a href="drinks.html" class="hover:underline">Напитки</a>
+<a href="community.html" class="hover:underline">Сообщество</a>
+<a href="submit-recipe.html" class="underline">Добавить рецепт</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="py-10 px-6 max-w-5xl mx-auto">
+    <h2 class="text-4xl font-bold mb-8 text-center">🍽 Рецепты от сообщества</h2>
+    <div id="recipesContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </section>
+
+  <footer class="gradient-bg text-white py-6 mt-12">
+    <div class="container mx-auto px-6 text-center">
+      <p>&copy; 2025 Узбекская кухня. Все права защищены.</p>
+    </div>
+  </footer>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvgGYErR11oRTBeOmKsC6IXZYU9WhCBL4",
+      authDomain: "foodsite-e0847.firebaseapp.com",
+      projectId: "foodsite-e0847",
+      storageBucket: "foodsite-e0847.appspot.com",
+      messagingSenderId: "739541526708",
+      appId: "1:739541526708:web:70e4507f7f6e3a90d90fe1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    function logout() {
+      auth.signOut().then(() => location.reload());
+    }
+
+    async function loadRecipes() {
+      const container = document.getElementById("recipesContainer");
+      const snapshot = await db.collection("recipes").orderBy("createdAt", "desc").get();
+      snapshot.forEach(doc => {
+        const recipe = doc.data();
+        const card = document.createElement("div");
+        card.className = "bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition";
+        card.innerHTML = `
+          <img src="${recipe.photoURL}" alt="${recipe.title}" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h3 class="text-xl font-bold mb-2">${recipe.title}</h3>
+            <p class="text-sm text-gray-600 mb-1">Автор: ${recipe.author}</p>
+            <p class="text-sm text-gray-500">${recipe.tags?.join(", ")}</p>
+            <a href="recipe.html?id=${doc.id}" class="text-red-600 hover:underline mt-2 inline-block">Подробнее</a>
+          </div>`;
+        container.appendChild(card);
+      });
+    }
+
+    loadRecipes();
+  </script>
+
+  <style>
+    .gradient-bg {
+      background: linear-gradient(135deg, #dc2626 0%, #7f1d1d 40%, #64748b 100%);
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Блюда | Узбекская кухня</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #dc2626 0%, #7f1d1d 40%, #64748b 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); }
+    .btn-copy { background: #64748b; color: white; padding: .5rem 1rem; border-radius: .375rem; cursor: pointer; margin-top: .5rem; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<header class="gradient-bg text-white py-6 sticky top-0 z-10">
+  <div class="container mx-auto px-6 flex justify-between items-center">
+    <h1 class="text-3xl font-bold"><a href="index.html">Узбекская кухня</a></h1>
+    <nav class="space-x-4">
+<a href="recipes.html" class="hover:underline">Блюда</a>
+<a href="drinks.html" class="hover:underline">Напитки</a>
+<a href="community.html" class="hover:underline">Сообщество</a>
+<a href="submit-recipe.html" class="underline">Добавить рецепт</a>
+    </nav>
+  </div>
+</header>
+
+<section id="recipes" class="py-16">
+  <div class="container mx-auto px-6">
+    <h2 class="text-4xl font-bold mb-10 text-center">🥘 Популярные блюда</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+
+      <div class="bg-white p-6 rounded-xl card-hover">
+        <h3 class="text-2xl font-semibold mb-2">Самаркандский плов</h3>
+        <p><strong>Ингредиенты:</strong><br>г. / мясо 500 г, рис 400 г, морковь 3 шт, лук 2 шт, чеснок, зира, масло, соль.</p>
+        <button class="btn-copy" data-target="plov1">Скопировать ингредиенты</button>
+        <p><strong>Приготовление:</strong> Нарезать мясо и обжарить в казане. Добавить лук, морковь, специи, воду и тушить 30 мин. Затем добавить рис, варить до готовности, в конце – чеснок, оставить настаиваться.</p>
+        <p class="text-sm text-gray-500">⏱️ 2.5–3 часа</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl card-hover">
+        <h3 class="text-2xl font-semibold mb-2">Плов с нутом</h3>
+        <p><strong>Ингредиенты:</strong><br>рис 500 г, мясо 400 г, морковь 2 шт, лук 1 шт, нут 100 г, чеснок, специи, масло.</p>
+        <button class="btn-copy" data-target="plov2">Скопировать ингредиенты</button>
+        <p><strong>Приготовление:</strong> Обжарить мясо, лук, морковь в казане. Добавить нут, воду, тушить. Засыпать рис, варить до впитывания жидкости, накрыть, настоять, добавить чеснок.</p>
+        <p class="text-sm text-gray-500">⏱️ 2.5 часа</p>
+      </div>
+
+      <!-- Остальные рецепты вставляй аналогично -->
+
+    </div>
+  </div>
+</section>
+
+<footer class="gradient-bg text-white py-6 mt-12">
+  <div class="container mx-auto px-6 text-center">
+    <p>&copy; 2025 Узбекская кухня. Все права защищены.</p>
+  </div>
+</footer>
+
+<script>
+  // Плавный скролл
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelector(a.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // Копирование ингредиентов
+  document.querySelectorAll('.btn-copy').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.previousElementSibling.textContent;
+      navigator.clipboard.writeText(text).then(() => alert('Скопировано!'));
+    });
+  });
+</script>
+
+</body>
+</html>
